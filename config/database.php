@@ -1,8 +1,14 @@
 <?php
-$host = "localhost";
+// este es para las pribas locales 
+/*$host = "localhost";
 $db = "agenda_app";
 $user = "root";
-$pass = "root"; 
+$pass = "root"; */
+
+$host = "sql211.infinityfree.com";
+$db = "if0_41931788_agenda";
+$user = "if0_41931788";
+$pass = "GC9RT6QC4F";
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -13,10 +19,5 @@ try {
         "message" => "Error de conexión"
     ]);
 }
-
-$host = "sql123.infinityfree.com";
-$db = "if0_12345678_agenda";
-$user = "if0_12345678";
-$pass = "c22sr0TTwX";
 
 ?>

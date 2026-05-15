@@ -1,6 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-echo json_encode(getallheaders());
+
 require_once "../config/database.php";
 require_once "../config/auth.php";
 
