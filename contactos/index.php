@@ -17,4 +17,6 @@ echo json_encode([
     "success" => true,
     "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
 ]);
+
+//prueba
 ?>
