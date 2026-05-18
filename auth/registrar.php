@@ -3,6 +3,7 @@
 header("Content-Type: application/json");
 
 require_once "../config/database.php";
+require_once "../config/cors.php";
 
 $nombre = $_POST['nombre_de_usuario'] ?? null;
 $password = $_POST['password'] ?? null;
