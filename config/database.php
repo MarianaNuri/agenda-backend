@@ -1,3 +1,4 @@
+
 <?php
 // este es para las pribas locales 
 /*$host = "localhost";
