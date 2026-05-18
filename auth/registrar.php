@@ -75,18 +75,10 @@ $stmt->execute([
     $passwordHash,
     $foto
 ]);
-// OBTENER EL ID GENERADO (Por si lo necesitas en tu app)
-$usuarioId = $conn->lastInsertId();
 
-// RESPUESTA COMPATIBLE CON TU STORE DE PINIA
 echo json_encode([
     "success" => true,
-    "message" => "Usuario registrado correctamente",
-    "user" => [
-        "id" => $usuarioId,
-        "nombre_de_usuario" => $nombre,
-        "foto" => $foto
-    ]
+    "message" => "Usuario registrado correctamente"
 ]);
-exit;
+
 ?>
