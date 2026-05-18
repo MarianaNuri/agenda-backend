@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 
 require_once "../config/database.php";
 require_once "../config/auth.php";
+require_once "../config/cors.php";
 
 
 
