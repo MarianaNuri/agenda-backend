@@ -1,21 +1,6 @@
 <?php
-
-// Permitir solicitudes desde el origen de tu frontend en GitHub Pages
-header("Access-Control-Allow-Origin: https://mariananuri.github.io");
-
-// Permitir los métodos HTTP que uses (POST, GET, OPTIONS, etc.)
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
-
-// Permitir las cabeceras que el cliente pueda enviar (como Content-Type o Authorization)
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-
-// Manejar las peticiones de tipo OPTIONS (Preflight)
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    exit(0);
-}
-
-// require_once "../config/cors.php";
-header("Content-Type: application/json");
+require_once "../config/cors.php";
+header("Content-Type: application/json; charset=UTF-8");
 require_once "../config/database.php";
 
 // Leer JSON
