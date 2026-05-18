@@ -5,18 +5,19 @@ header("Content-Type: application/json");
 require_once "../config/database.php";
 require_once "../config/cors.php";
 
+// Leer JSON
 $input = json_decode(
     file_get_contents("php://input"),
     true
 );
 
+// Obtener datos
 $nombre = $input['nombre_de_usuario'] ?? null;
-$email = $input['email'] ?? null;
 $password = $input['password'] ?? null;
 
+// Validar campos
 if (
     !$nombre ||
-    !$email ||
     !$password
 ) {
 
@@ -27,15 +28,12 @@ if (
     exit;
 }
 
-// sanitizar
+// Sanitizar
 $nombre = htmlspecialchars(
     trim($nombre)
 );
-$email = htmlspecialchars(
-    trim($email)
-);
 
-// verificar si ya existe
+// Verificar usuario existente
 $stmt = $conn->prepare("
     SELECT id
     FROM usuarios
@@ -55,60 +53,27 @@ if ($stmt->fetch()) {
     exit;
 }
 
-// encriptar password
+// Encriptar contraseña
 $passwordHash = password_hash(
     $password,
     PASSWORD_DEFAULT
 );
 
-// imagen opcional
+// Foto opcional
 $foto = null;
 
-if (isset($_FILES['foto'])) {
-
-    $permitidos = [
-        'image/jpeg',
-        'image/png',
-        'image/webp'
-    ];
-
-    if (
-        !in_array(
-            $_FILES['foto']['type'],
-            $permitidos
-        )
-    ) {
-
-        echo json_encode([
-            "success" => false,
-            "message" => "Formato no permitido"
-        ]);
-        exit;
-    }
-
-    $nombreArchivo = time() . "_" . $_FILES['foto']['name'];
-
-    move_uploaded_file(
-        $_FILES['foto']['tmp_name'],
-        "../uploads/usuarios/" . $nombreArchivo
-    );
-
-    $foto = $nombreArchivo;
-}
-
+// Insertar usuario
 $stmt = $conn->prepare("
     INSERT INTO usuarios (
         nombre_de_usuario,
-        email,
         password,
         foto
     )
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?)
 ");
 
 $stmt->execute([
     $nombre,
-    $email,
     $passwordHash,
     $foto
 ]);
