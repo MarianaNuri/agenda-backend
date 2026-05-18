@@ -1,11 +1,9 @@
 // aqui se puede editar el perfil del usuario, cambiar su nombre, contraseña, etc.
 
 <?php
-
-header("Content-Type: application/json");
-
-require_once "../config/database.php";
 require_once "../config/cors.php";
+header("Content-Type: application/json");
+require_once "../config/database.php";
 require_once "../config/auth.php";
 
 // Validar token

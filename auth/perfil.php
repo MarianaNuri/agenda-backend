@@ -1,11 +1,9 @@
 // aqui va el perfil del usuario, con su informacion y sus contactos, etc.
 
 <?php
-
-header("Content-Type: application/json");
-
-require_once "../config/database.php";
 require_once "../config/cors.php";
+header("Content-Type: application/json");
+require_once "../config/database.php";
 require_once "../config/auth.php";
 
 // Validar token

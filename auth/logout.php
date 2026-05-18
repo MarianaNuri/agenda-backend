@@ -1,11 +1,9 @@
 // aqui va logout del usuario, que básicamente es eliminar el token del cliente, ya que el token es stateless y no se guarda en el servidor.
 
 <?php
-
-header("Content-Type: application/json");
-
-require_once "../config/database.php";
 require_once "../config/cors.php";
+header("Content-Type: application/json");
+require_once "../config/database.php";
 require_once "../config/auth.php";
 
 // Validar token
