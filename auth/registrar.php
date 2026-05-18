@@ -5,11 +5,18 @@ header("Content-Type: application/json");
 require_once "../config/database.php";
 require_once "../config/cors.php";
 
-$nombre = $_POST['nombre_de_usuario'] ?? null;
-$password = $_POST['password'] ?? null;
+$input = json_decode(
+    file_get_contents("php://input"),
+    true
+);
+
+$nombre = $input['nombre_de_usuario'] ?? null;
+$email = $input['email'] ?? null;
+$password = $input['password'] ?? null;
 
 if (
     !$nombre ||
+    !$email ||
     !$password
 ) {
 
@@ -23,6 +30,9 @@ if (
 // sanitizar
 $nombre = htmlspecialchars(
     trim($nombre)
+);
+$email = htmlspecialchars(
+    trim($email)
 );
 
 // verificar si ya existe
@@ -89,14 +99,16 @@ if (isset($_FILES['foto'])) {
 $stmt = $conn->prepare("
     INSERT INTO usuarios (
         nombre_de_usuario,
+        email,
         password,
         foto
     )
-    VALUES (?, ?, ?)
+    VALUES (?, ?, ?, ?)
 ");
 
 $stmt->execute([
     $nombre,
+    $email,
     $passwordHash,
     $foto
 ]);
