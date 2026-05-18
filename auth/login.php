@@ -1,7 +1,7 @@
 <?php
 require_once "../config/cors.php";
-include '../config/database.php';
-
+header("Content-Type: application/json");
+require_once "../config/database.php";
 
 $data = json_decode(file_get_contents("php://input"));
 
