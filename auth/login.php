@@ -3,12 +3,10 @@ require_once "../config/cors.php";
 header("Content-Type: application/json");
 require_once "../config/database.php";
 
-$data = json_decode(file_get_contents("php://input"));
+$nombre = $_POST['nombre_de_usuario'] ?? null;
+$password = $_POST['password'] ?? null;
 
-if(
-    empty($data->nombre_de_usuario) ||
-    empty($data->password)
-){
+if(!$nombre || !$password){
 
     echo json_encode([
         "success" => false,
@@ -18,23 +16,17 @@ if(
     exit;
 }
 
-$query = "SELECT * FROM usuarios 
-          WHERE nombre_de_usuario = ?";
+$query = "SELECT * FROM usuarios WHERE nombre_de_usuario = ?";
 
 $stmt = $conn->prepare($query);
 
-$stmt->execute([
-    $data->nombre_de_usuario
-]);
+$stmt->execute([$nombre]);
 
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if(
     !$usuario ||
-    !password_verify(
-        $data->password,
-        $usuario['password']
-    )
+    !password_verify($password, $usuario['password'])
 ){
 
     echo json_encode([
@@ -45,19 +37,13 @@ if(
     exit;
 }
 
-$token = bin2hex(
-    random_bytes(32)
-);
+$token = bin2hex(random_bytes(32));
 
-$expiracion = date(
-    'Y-m-d H:i:s',
-    strtotime('+1 day')
-);
+$expiracion = date('Y-m-d H:i:s', strtotime('+1 day'));
 
 $update = "
 UPDATE usuarios
-SET token = ?,
-token_expiracion = ?
+SET token = ?, token_expiracion = ?
 WHERE id = ?
 ";
 
@@ -74,8 +60,7 @@ echo json_encode([
     "token" => $token,
     "usuario" => [
         "id" => $usuario['id'],
-        "nombre_de_usuario" =>
-        $usuario['nombre_de_usuario'],
+        "nombre_de_usuario" => $usuario['nombre_de_usuario'],
         "foto" => $usuario['foto']
     ]
 ]);
