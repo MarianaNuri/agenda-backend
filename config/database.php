@@ -11,10 +11,15 @@ $pass = "root"; */
 //$user = "if0_41931788";
 //$pass = "GC9RT6QC4F";
 
-$host = "fdb1032.awardspace.net";
-$db = "4760450_agenda";
-$user = "4760450_agenda";
-$pass = "AgendaContactos1234";
+//$host = "fdb1032.awardspace.net";
+//$db = "4760450_agenda";
+//$user = "4760450_agenda";
+//$pass = "AgendaContactos1234";
+
+$host = "mysql-sistemas-agenda.alwaysdata.net";
+$db = "sistemas-agenda_proyecto";
+$user = "sistemas-agenda_admin"; // El usuario que creamos hace un momento
+$pass = "Agenda2026#Admin"; // La contraseña que lograste validar en el formulario
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
