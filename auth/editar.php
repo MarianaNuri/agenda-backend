@@ -6,9 +6,8 @@ error_reporting(0);
 
 require_once "../config/database.php";
 
-// RECUPERAR EL ID DEL USUARIO DESDE LA URL (?usuario_id=X)
-$usuarioId = isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : null;
-
+// RECUPERAR EL ID DEL USUARIO DESDE LA URL (Acepta 'id' enviado por el Front o 'usuario_id')
+$usuarioId = isset($_GET['id']) ? intval($_GET['id']) : (isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : null);
 if (!$usuarioId) {
     echo json_encode([
         "success" => false,
