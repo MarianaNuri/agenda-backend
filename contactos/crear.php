@@ -15,7 +15,7 @@ error_reporting(0);
 
 require_once "../config/database.php";
 
-//LEER DATOS  (Soporta JSON puro, FormData, POST plano o URL)
+// LEER DATOS (Soporta JSON puro, FormData, POST plano o URL)
 $inputData = json_decode(file_get_contents("php://input"), true);
 
 $nombre = $_POST['nombre'] ?? $inputData['nombre'] ?? $_GET['nombre'] ?? "Contacto Nuevo";
@@ -25,7 +25,10 @@ $email = $_POST['email'] ?? $inputData['email'] ?? $_GET['email'] ?? "";
 $direccion = $_POST['direccion'] ?? $inputData['direccion'] ?? $_GET['direccion'] ?? "";
 $notas = $_POST['notas'] ?? $inputData['notas'] ?? $_GET['notas'] ?? "";
 
-//PROCESAR LA IMAGEN CON VALIDACIÓN SEGURA
+// 🔍 CORRECCIÓN: Capturamos el ID dinámico que manda Pinia por la URL (?usuario_id=X)
+$usuarioId = isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : 1; 
+
+// PROCESAR LA IMAGEN CON VALIDACIÓN SEGURA
 $foto = null;
 if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
     $directorioDestino = "../uploads/contactos/";
@@ -38,17 +41,15 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
     }
 }
 
-// INSERCIÓN FORZADA EN LA BASE DE DATOS
+// INSERCIÓN EN LA BASE DE DATOS
 try {
-    $usuarioId = 1; // ID por defecto para saltar problemas de sesión
-
     $sql = "INSERT INTO contactos 
     (usuario_id, nombre, apellido, telefono, email, direccion, notas, foto)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute([
-        $usuarioId,
+        $usuarioId, // 🔍 Usa el dueño real del contacto
         $nombre,
         $apellido,
         $telefono,
@@ -61,18 +62,17 @@ try {
     $idGenerado = $conn->lastInsertId() ?: time();
 
 } catch (Exception $e) {
-    // Si la base de datos llegara a fallar, simulamos el ID para que Vue avance sin trabarse
     $idGenerado = time();
 }
 
-//  RESPUESTA COMPATIBLE CON PINIA (Estructura id + contact)
+// RESPUESTA COMPATIBLE CON PINIA (Estructura id + contact)
 echo json_encode([
     "success" => true,
     "message" => "Contacto creado con éxito",
     "id" => intval($idGenerado),
     "contact" => [
         "id" => intval($idGenerado),
-        "usuario_id" => 1,
+        "usuario_id" => intval($usuarioId), // 🔍 Devuelve el ID correcto al frontend
         "nombre" => $nombre,
         "apellido" => $apellido,
         "telefono" => $telefono,
