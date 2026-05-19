@@ -6,7 +6,9 @@ header("Access-Control-Allow-Origin: https://mariananuri.github.io");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
 // Headers permitidos
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+header("Access-Control-Allow-Credentials: true");
 
 // Manejar preflight (OPTIONS)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
