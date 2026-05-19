@@ -35,6 +35,15 @@ try {
     foreach ($contactos as &$c) {
         $c['id'] = intval($c['id']);
         $c['usuario_id'] = intval($c['usuario_id']);
+
+        // Si el contacto tiene una foto, convertimos el nombre del archivo en una URL completa
+        if (!empty($c['foto'])) {
+            // Esto crea la URL completa apuntando a tu carpeta en AlwaysData
+            $c['foto'] = "https://sistemas-agenda.alwaysdata.net/api/uploads/contactos/" . $c['foto'];
+        } else {
+            // Opcional: una imagen por defecto si no tiene foto
+            $c['foto'] = null; 
+        }
     }
 
     // 4. RESPUESTA DIRECTA (El array limpio que Pinia espera mapear)
