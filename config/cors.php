@@ -1,18 +1,20 @@
 <?php
-// Permitir solicitudes desde cualquier origen (GitHub Pages)
-header("Access-Control-Allow-Origin: https://mariananuri.github.io");
+// 1. Permitir solicitudes desde cualquier origen (Esencial para GitHub Pages)
+header("Access-Control-Allow-Origin: *");
 
-// Métodos permitidos
+// 2. Métodos HTTP permitidos para todo tu CRUD
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
-// Headers permitidos
+// 3. Headers permitidos en las peticiones
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-header("Access-Control-Allow-Credentials: true");
+// Al usar el comodín (*), no se permite enviar credenciales nativas (como cookies automáticas).
+// Como ustedes manejan todo de forma manual por localStorage, esta línea no se necesita y causa errores si se activa junto al *.
+// header("Access-Control-Allow-Credentials: true"); 
 
-// Manejar preflight (OPTIONS)
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
+// 4. Manejar de forma limpia la petición de control preflight (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("HTTP/1.1 200 OK");
     exit();
 }
 ?>
