@@ -31,7 +31,7 @@ $usuarioId = isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : 1;
 // PROCESAR LA IMAGEN CON VALIDACIÓN SEGURA
 $foto = null;
 if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $directorioDestino = "../uploads/contactos/";
+    $directorioDestino = "../../uploads/contactos/";
     if (!file_exists($directorioDestino)) {
         mkdir($directorioDestino, 0777, true);
     }
