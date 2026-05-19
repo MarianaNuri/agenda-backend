@@ -1,12 +1,19 @@
 <?php
+
 require_once "../config/cors.php";
 header("Content-Type: application/json");
+
 require_once "../config/database.php";
 
-$nombre = $_POST['nombre_de_usuario'] ?? null;
-$password = $_POST['password'] ?? null;
+$input = json_decode(
+    file_get_contents("php://input"),
+    true
+);
 
-if(!$nombre || !$password){
+$nombre = $input['nombre_de_usuario'] ?? null;
+$password = $input['password'] ?? null;
+
+if (!$nombre || !$password) {
 
     echo json_encode([
         "success" => false,
@@ -16,7 +23,11 @@ if(!$nombre || !$password){
     exit;
 }
 
-$query = "SELECT * FROM usuarios WHERE nombre_de_usuario = ?";
+$query = "
+SELECT *
+FROM usuarios
+WHERE nombre_de_usuario = ?
+";
 
 $stmt = $conn->prepare($query);
 
@@ -24,10 +35,10 @@ $stmt->execute([$nombre]);
 
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if(
+if (
     !$usuario ||
     !password_verify($password, $usuario['password'])
-){
+) {
 
     echo json_encode([
         "success" => false,
@@ -39,7 +50,10 @@ if(
 
 $token = bin2hex(random_bytes(32));
 
-$expiracion = date('Y-m-d H:i:s', strtotime('+1 day'));
+$expiracion = date(
+    'Y-m-d H:i:s',
+    strtotime('+1 day')
+);
 
 $update = "
 UPDATE usuarios
