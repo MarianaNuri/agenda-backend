@@ -76,9 +76,36 @@ $stmt->execute([
     $foto
 ]);
 
+$nuevoId = $conn->lastInsertId();
+// Generar tokenn de sesión
+$token = bin2hex(random_bytes(32));
+$expiracion = date(
+    'Y-m-d H:i:s',
+    strtotime('+1 day')
+);
+// Guardar token en la base de datos
+$stmt = $conn->prepare("
+    UPDATE usuarios
+    SET token = ?, token_expiracion = ?
+    WHERE id = ?
+");
+
+$stmt->execute([
+    $token,
+    $expiracion,
+    $nuevoId
+]);
+//devolver el token + usuario recién creado (con foto como null, el frontend lo manejará)
+
 echo json_encode([
     "success" => true,
-    "message" => "Usuario registrado correctamente"
+    "message" => "Usuario registrado correctamente",
+    "token" => $token,
+    "user" => [
+        "id" => $nuevoId,
+        "nombre_de_usuario" => $nombre,
+        "foto" => $foto
+    ]
 ]);
 
 ?>
