@@ -1,7 +1,7 @@
 // aqui va el perfil del usuario, con su informacion y sus contactos, etc.
 
 <?php
-// CABECERAS DE CORS ULTRA AGRESIVAS
+// CABECERAS DE CORS 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
@@ -25,12 +25,17 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+        // Construimos la URL completa
+        $foto_url = !empty($user['foto']) 
+            ? "https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/" . $user['foto'] 
+            : null;
+
         echo json_encode([
             "success" => true,
             "user" => [
                 "id" => intval($user['id']),
                 "nombre_de_usuario" => $user['nombre_de_usuario'],
-                "foto" => $user['foto']
+                "foto" => $foto_url // Enviamos la URL completa construida arriba
             ]
         ]);
     } else {

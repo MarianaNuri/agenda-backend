@@ -38,7 +38,7 @@ try {
 
         // Si el contacto tiene una foto, convertimos el nombre del archivo en una URL completa
         if (!empty($c['foto'])) {
-            // Esto crea la URL completa apuntando a tu carpeta en AlwaysData
+            // Esto crea la URL completa apuntando a carpeta en AlwaysData
             $c['foto'] = "https://sistemas-agenda.alwaysdata.net/api/uploads/contactos/" . $c['foto'];
         } else {
             // Opcional: una imagen por defecto si no tiene foto

@@ -1,5 +1,5 @@
 <?php
-// 1. INCLUIMOS EL CORS CENTRALIZADO (Ya maneja OPTIONS y cabeceras)
+// INCLUIMOS EL CORS CENTRALIZADO (Ya maneja OPTIONS y cabeceras)
 require_once "../config/cors.php";
 header("Content-Type: application/json; charset=UTF-8");
 error_reporting(0);
@@ -40,7 +40,7 @@ try {
 
     $stmt->execute([$id, $usuarioId]);
 
-    // 5. FORMATO DE RESPUESTA OBLIGATORIO SEGÚN CONTRATO
+    // 5. FORMATO DE RESPUESTA 
     echo json_encode([
         "success" => true,
         "message" => "Operación realizada correctamente"
