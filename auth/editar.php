@@ -1,38 +1,41 @@
 <?php
 // INCLUIMOS EL CORS CENTRALIZADO (Ya maneja OPTIONS y las cabeceras limpias)
 require_once "../config/cors.php";
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("HTTP/1.1 200 OK");
+    exit;
+}
+
 header("Content-Type: application/json; charset=UTF-8");
 error_reporting(0);
 
 require_once "../config/database.php";
-
-// RECUPERAR EL ID DEL USUARIO DESDE LA URL (Acepta 'id' enviado por el Front o 'usuario_id')
-$usuarioId = isset($_GET['id']) ? intval($_GET['id']) : (isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : null);
-if (!$usuarioId) {
-    echo json_encode([
-        "success" => false,
-        "message" => "ID de usuario requerido para actualizar"
-    ]);
-    exit;
-}
-
-// LEER DATOS 
-$inputData = json_decode(file_get_contents("php://input"), true);
-
-$nombre = $_POST['nombre_de_usuario'] ?? $inputData['nombre_de_usuario'] ?? null;
-$password = $_POST['password'] ?? $inputData['password'] ?? null; // Opcional por si cambian contraseña
-
-if (!$nombre) {
-    echo json_encode([
-        "success" => false,
-        "message" => "El nombre de usuario es requerido"
-    ]);
-    exit;
-}
-
-$nombre = htmlspecialchars(trim($nombre));
+// 1. IMPORTANTE: Traer la función que protege la ruta y valida el token
+require_once "../config/auth.php"; 
 
 try {
+    // 2. PROTECCIÓN DE RUTA: Validamos el token y obtenemos el usuario autenticado
+    // Ya no usamos $_GET['id'] ni $_GET['usuario_id']. El token identifica al usuario de forma segura.
+    $usuarioAutenticado = verificarToken(); 
+    $usuarioId = intval($usuarioAutenticado['id']);
+
+    // LEER DATOS 
+    $inputData = json_decode(file_get_contents("php://input"), true);
+
+    $nombre = $_POST['nombre_de_usuario'] ?? $inputData['nombre_de_usuario'] ?? null;
+    $password = $_POST['password'] ?? $inputData['password'] ?? null; // Opcional por si cambian contraseña
+
+    if (!$nombre) {
+        echo json_encode([
+            "success" => false,
+            "message" => "El nombre de usuario es requerido"
+        ]);
+        exit;
+    }
+
+    $nombre = htmlspecialchars(trim($nombre));
+
     // OBTENER LOS DATOS ACTUALES (Para conservar la foto o contraseña si no se envían cambios)
     $stmtActual = $conn->prepare("SELECT foto, password FROM usuarios WHERE id = ?");
     $stmtActual->execute([$usuarioId]);
@@ -72,10 +75,10 @@ try {
         }
     }
 
-    //PROCESAR NUEVA CONTRASEÑA (Solo si el usuario escribió algo en ese campo)
+    // PROCESAR NUEVA CONTRASEÑA (Solo si el usuario escribió algo en ese campo)
     if (!empty($password)) {
-        // Encriptamos la nueva contraseña de forma segura
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+        // Encriptamos utilizando el algoritmo estándar compatible con password_verify()
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
     }
 
     // ACTUALIZAR EN LA BASE DE DATOS
@@ -91,18 +94,23 @@ try {
         $usuarioId
     ]);
 
-    // RESPUESTA COMPATIBLE CON TU STORE EN FRONTEND (Devuelve claves duplicadas 'user' y 'usuario' por seguridad)
-    $usuarioActualizado = [
-        "id" => $usuarioId,
-        "nombre_de_usuario" => $nombre,
-        "foto" => $foto
-    ];
+    // Construimos la URL completa de la foto para el Front-End
+    $fotoUrl = $foto ? "https://sistemas-agenda.alwaysdata.net/api/uploads/usuarios/" . $foto : null;
 
+    // RESPUESTA COMPATIBLE CON EL CONTRATO (Devuelve las claves necesarias)
     echo json_encode([
         "success" => true,
-        "message" => "Perfil actualizado con éxito",
-        "user" => $usuarioActualizado,
-        "usuario" => $usuarioActualizado
+        "message" => "Operación realizada correctamente",
+        "usuario" => [
+            "id" => $usuarioId,
+            "nombre_de_usuario" => $nombre,
+            "foto" => $fotoUrl
+        ]
+        "user" => [ 
+            "id" => $usuarioId,
+            "nombre_de_usuario" => $nombre,
+            "foto" => $fotoUrl
+        ]
     ]);
     exit;
 
