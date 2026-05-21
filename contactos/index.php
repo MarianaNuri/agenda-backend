@@ -16,6 +16,7 @@ require_once "../config/database.php";
 // Cumplimos con el punto 7 del documento: Validar el token en el Backend
 require_once "../config/auth.php"; 
 
+
 try {
     // Identificamos al usuario autenticado de forma segura a través del Token
     $usuarioAutenticado = verificarToken(); 
